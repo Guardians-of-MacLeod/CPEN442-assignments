@@ -51,7 +51,7 @@ class Assignment3VPN:
         self.receive_thread = Thread(target=self._ReceiveMessages, daemon=True)
         
         # Creating a protocol object
-        self.prtcl = Protocol()
+        self.prtcl = Protocol(self.sharedSecret.get())
      
     # Distructor     
     def __del__(self):
@@ -150,11 +150,14 @@ class Assignment3VPN:
 
                 # Checking if the received message is part of your protocol
                 # TODO: MODIFY THE INPUT ARGUMENTS AND LOGIC IF NECESSARY
+                print(f"received: {cipher_text}")
                 if self.prtcl.IsMessagePartOfProtocol(cipher_text):
                     # Disabling the button to prevent repeated clicks
                     self.secureButton["state"] = "disabled"
                     # Processing the protocol message
-                    self.prtcl.ProcessReceivedProtocolMessage(cipher_text)
+                    response = self.prtcl.ProcessReceivedProtocolMessage(cipher_text)
+                    print("response: ", response)
+                    self.conn.send(response.encode())
 
                 # Otherwise, decrypting and showing the messaage
                 else:
@@ -170,6 +173,7 @@ class Assignment3VPN:
     def _SendMessage(self, message):
         plain_text = message
         cipher_text = self.prtcl.EncryptAndProtectMessage(plain_text)
+        print("cipher_text: ", cipher_text)
         self.conn.send(cipher_text.encode())
             
 
