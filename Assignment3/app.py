@@ -150,14 +150,18 @@ class Assignment3VPN:
 
                 # Checking if the received message is part of your protocol
                 # TODO: MODIFY THE INPUT ARGUMENTS AND LOGIC IF NECESSARY
-                print(f"received: {cipher_text}")
+                print("Received Message: " + str(cipher_text))
                 if self.prtcl.IsMessagePartOfProtocol(cipher_text):
                     # Disabling the button to prevent repeated clicks
                     self.secureButton["state"] = "disabled"
                     # Processing the protocol message
+                    # We added a response to the protocol messages received here so it can be sent to the other party to bootstrap the protocol
+                    # We do not call EncryptAndProtectMessage here as the key has not yet been established. If the message required particular
+                    # encryption, such as encrypting the challenge to prove that the other party has the key, this is handleld in the 
+                    # ProcessReceivedProtocolMessage function.
                     response = self.prtcl.ProcessReceivedProtocolMessage(cipher_text)
-                    print("response: ", response)
-                    self.conn.send(response.encode())
+                    if response is not None: 
+                        self.conn.send(response.encode())
 
                 # Otherwise, decrypting and showing the messaage
                 else:
@@ -171,9 +175,8 @@ class Assignment3VPN:
 
     # Send data to the other party
     def _SendMessage(self, message):
-        plain_text = message
+        plain_text = message            
         cipher_text = self.prtcl.EncryptAndProtectMessage(plain_text)
-        print("cipher_text: ", cipher_text)
         self.conn.send(cipher_text.encode())
             
 
@@ -183,7 +186,11 @@ class Assignment3VPN:
         self.secureButton["state"] = "disabled"
 
         # TODO: THIS IS WHERE YOU SHOULD IMPLEMENT THE START OF YOUR MUTUAL AUTHENTICATION AND KEY ESTABLISHMENT PROTOCOL, MODIFY AS YOU SEEM FIT
+        # This message will be sent in the clear as a key has not yet been established.
+        # The GetProtocolInitiationMessage function does not encrypt the message as the _key field is None.
+        # It simply returns ciphertext = plaintext in this case.
         init_message = self.prtcl.GetProtocolInitiationMessage()
+        print("init_message: ", str(init_message))
         self._SendMessage(init_message)
 
 
