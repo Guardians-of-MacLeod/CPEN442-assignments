@@ -189,6 +189,7 @@ class Assignment3VPN:
         # The GetProtocolInitiationMessage function does not encrypt the message as the _key field is None.
         # It simply returns ciphertext = plaintext in this case.
         init_message = self.prtcl.GetProtocolInitiationMessage()
+        self._AppendLog("Secure Connection Initiating...")
         print("init_message: ", str(init_message))
         self._SendMessage(init_message)
 

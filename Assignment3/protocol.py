@@ -92,6 +92,7 @@ class Protocol:
         # Check action of protocol message
         if message["action"] == "initiate" and message["sender"] == "client":
             print("Server Received Initiate Message")
+            self._appendLog("Secure Connection Initiating...")
             # Generate Response to Challenge
             self._challenge = str(self.GenerateChallenge())
 
@@ -160,6 +161,7 @@ class Protocol:
         self._key = hmac_digest # The proposed key
         self._secure = True
         print("Session Key Set: " + str(self._key))
+        self._appendLog("Secure Connection Established")
 
     def isSecure(self):
         return self._secure
