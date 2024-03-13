@@ -9,8 +9,9 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM # For AES GCM Enc
 class Protocol:
     # Initializer (Called from app.py)
     # TODO: MODIFY ARGUMENTS AND LOGIC AS YOU SEEM FIT
-    def __init__(self, sharedSecret):
+    def __init__(self, sharedSecret, appendLog):
         self._sharedSecret = sharedSecret # Store shared secret
+        self._appendLog = appendLog 
         self._key = None # The session key
 
         # Generate the proposed key using sha256. both client and server will generate the same as they have the same shared secret

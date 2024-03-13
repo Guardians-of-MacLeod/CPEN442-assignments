@@ -51,7 +51,7 @@ class Assignment3VPN:
         self.receive_thread = Thread(target=self._ReceiveMessages, daemon=True)
         
         # Creating a protocol object
-        self.prtcl = Protocol(self.sharedSecret.get())
+        self.prtcl = Protocol(self.sharedSecret.get(), self._AppendLog)
      
     # Distructor     
     def __del__(self):
