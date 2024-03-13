@@ -160,6 +160,8 @@ class Protocol:
         self._secure = True
         print("Session Key Set: " + str(self._key))
 
+    def isSecure(self):
+        return self._secure
 
     '''
     Helper function to encrypt the challenge
@@ -217,7 +219,7 @@ class Protocol:
         if self._key is None:
             print("Key not established yet, returning cipher_text")
             # Key not established yet. return the cipher_text
-            return cipher_text
+            return "[Insecure] ".encode() + cipher_text
         
         # Decrypt using AESGCM now that key is established
         cipher_text = base64.b64decode(cipher_text)
@@ -226,7 +228,7 @@ class Protocol:
         cipher_text = cipher_text[12:]
         try:
             plain_text = aesgcm.decrypt(nonce, cipher_text, None)
-            return plain_text
+            return "[Secure] ".encode() + plain_text
         except:
             raise Exception("Integrity Verification (Decryption) Failed")
         

@@ -153,7 +153,6 @@ class Assignment3VPN:
                 print("Received Message: " + str(cipher_text))
                 if self.prtcl.IsMessagePartOfProtocol(cipher_text):
                     # Disabling the button to prevent repeated clicks
-                    print("is protocol  message")
                     self.secureButton["state"] = "disabled"
                     # Processing the protocol message
                     # We added a response to the protocol messages received here so it can be sent to the other party to bootstrap the protocol
@@ -164,7 +163,6 @@ class Assignment3VPN:
                     if response is not None: 
                         self.conn.send(response.encode())
                 else:
-                    print("is not protocol message")
                     # Message not part of protocol but encrypted
                     plain_text = self.prtcl.DecryptAndVerifyMessage(cipher_text)
                     self._AppendMessage("Other: {}".format(plain_text.decode()))
@@ -198,10 +196,12 @@ class Assignment3VPN:
     # Called when SendMessage button is clicked
     def SendMessage(self):
         text = self.textMessage.get()
+        connectionType = ""
         if  text != "" and self.s is not None:
             try:
                 self._SendMessage(text)
-                self._AppendMessage("You: {}".format(text))
+                connectionType = "Insecure" if self.prtcl.isSecure() == 0 else "Secure"
+                self._AppendMessage("You: [{typ}] {msg}".format(typ=connectionType,msg=text))
                 self.textMessage.set("")
             except Exception as e:
                 self._AppendLog("SENDING_MESSAGE: Error sending data: {}".format(str(e)))
