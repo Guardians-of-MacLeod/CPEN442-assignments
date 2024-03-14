@@ -48,7 +48,6 @@ class Protocol:
     def GetProtocolInitiationMessage(self):
         # Generate a challenge as a string. Using Mutual Authentication Protocol similar to Figure 9.12 in Stamp Book.
         self._challenge = str(self.GenerateChallenge())
-        print("generated challenge: " + self._challenge)
         # Using JSON for Message Format
         # This message will be sent in the clear as a key has not yet been established.
         return json.dumps({
@@ -62,16 +61,13 @@ class Protocol:
     # Checking if a received message is part of your protocol (called from app.py)
     # TODO: IMPLMENET THE LOGIC
     def IsMessagePartOfProtocol(self, message):
-        print("Checking if message is part of protocol")
         try:
             # Check if the message is a valid JSON
             message = json.loads(message)
             if not self._secure and message["type"] == "protocol":
-                print("Message is part of protocol")
                 # Message is a valid protocol message
                 return True
             else: 
-                print("Message is not part of protocol")
                 # Message is not a valid protocol message
                 return False
         except:
@@ -91,7 +87,6 @@ class Protocol:
         
         # Check action of protocol message
         if message["action"] == "initiate" and message["sender"] == "client":
-            print("Server Received Initiate Message")
             self._appendLog("Secure Connection Initiating...")
             # Generate Response to Challenge
             self._challenge = str(self.GenerateChallenge())
@@ -101,8 +96,6 @@ class Protocol:
             self._received_challenge = received_challenge
 
             # Encrypt the challenge and send it back
-            print("Server Encrypting Challenge")
-            print("Got Challenge: " + str(received_challenge))
             encrypted_challenge = self.EncryptChallenge(received_challenge)
             return json.dumps({
                 "sender": "server",
@@ -116,16 +109,11 @@ class Protocol:
             received_challenge = message["data"][0]
             self._received_challenge = received_challenge
             encrypted_challenge = message["data"][1] 
-            print("received challenge: " + received_challenge)
-            print("encrypted challenge: " + encrypted_challenge)
             # Decrypt the challenge and verify that it is the same
             decrypted_challenge = self.DecryptChallenge(encrypted_challenge)
-            print("decrypted challenge: " + str(decrypted_challenge))
             if decrypted_challenge == self._challenge:
-                print("decrypted challenge same as challenge")
                 encrypted_response = self.EncryptChallenge(received_challenge)
                 # Set the session key
-                print("Client Setting Session Key")
                 # Generate a random nonce to use for session key - can be sent in the clear as the shared secret is secret.
                 self.SetSessionKey(self._received_challenge)
                 # Client authenticated server. Now server has to authenticate client.
@@ -143,7 +131,6 @@ class Protocol:
             decrypted_challenge = self.DecryptChallenge(encrypted_challenge)
             if decrypted_challenge == self._challenge:
                 # Set the session key
-                print("Server Setting Session Key")
                 self.SetSessionKey(self._received_challenge)
                 # Now server has also authenticated client. 
                 return None
@@ -160,7 +147,6 @@ class Protocol:
         hmac_digest = hmac_obj.digest()
         self._key = hmac_digest # The proposed key
         self._secure = True
-        print("Session Key Set: " + str(self._key))
         self._appendLog("Secure Connection Established")
 
     def isSecure(self):
@@ -201,7 +187,6 @@ class Protocol:
     def EncryptAndProtectMessage(self, plain_text):
         # cipher_text = plain_text if sef._key is None
         if self._key is None:
-            print("Key not established yet, returning plain_text")
             # Key not established yet. Return the plain_text
             return plain_text
         
@@ -220,7 +205,6 @@ class Protocol:
     def DecryptAndVerifyMessage(self, cipher_text):
         # plain_text = cipher_text if self._key is None
         if self._key is None:
-            print("Key not established yet, returning cipher_text")
             # Key not established yet. return the cipher_text
             return "[Insecure] ".encode() + cipher_text
         

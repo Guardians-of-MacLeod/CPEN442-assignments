@@ -150,7 +150,6 @@ class Assignment3VPN:
 
                 # Checking if the received message is part of your protocol
                 # TODO: MODIFY THE INPUT ARGUMENTS AND LOGIC IF NECESSARY
-                print("Received Message: " + str(cipher_text))
                 if self.prtcl.IsMessagePartOfProtocol(cipher_text):
                     # Disabling the button to prevent repeated clicks
                     self.secureButton["state"] = "disabled"
@@ -190,7 +189,6 @@ class Assignment3VPN:
         # It simply returns ciphertext = plaintext in this case.
         init_message = self.prtcl.GetProtocolInitiationMessage()
         self._AppendLog("Secure Connection Initiating...")
-        print("init_message: ", str(init_message))
         self._SendMessage(init_message)
 
 
