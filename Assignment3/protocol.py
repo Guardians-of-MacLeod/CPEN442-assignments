@@ -13,15 +13,17 @@ class Protocol:
         self._sharedSecret = sharedSecret # Store shared secret
         self._appendLog = appendLog 
         self._key = None # The session key
-
-        # Generate the proposed key using sha256. both client and server will generate the same as they have the same shared secret
-        hmac_obj = hmac.new(self._sharedSecret.encode(), digestmod=hashlib.sha256)
-        hmac_digest = hmac_obj.digest()
-        self._proposedKey = hmac_digest # The proposed key
+        self.UpdateProposedKey() # Generate the proposed key
 
         self._challenge = None # The challenge sent to the other party
         self._received_challenge = None # The challenge received from the other party
         self._secure = False # Securing the protocol
+
+    def UpdateProposedKey(self):
+        # Generate the proposed key using sha256. both client and server will generate the same as they have the same shared secret
+        hmac_obj = hmac.new(self._sharedSecret.encode(), digestmod=hashlib.sha256)
+        hmac_digest = hmac_obj.digest()
+        self._proposedKey = hmac_digest # The proposed key
 
     '''
     Helper function to generate random bytes

@@ -187,6 +187,8 @@ class Assignment3VPN:
         # This message will be sent in the clear as a key has not yet been established.
         # The GetProtocolInitiationMessage function does not encrypt the message as the _key field is None.
         # It simply returns ciphertext = plaintext in this case.
+        self.prtcl._sharedSecret = self.sharedSecret.get()
+        self.prtcl.UpdateProposedKey()
         init_message = self.prtcl.GetProtocolInitiationMessage()
         self._AppendLog("Secure Connection Initiating...")
         self._SendMessage(init_message)
